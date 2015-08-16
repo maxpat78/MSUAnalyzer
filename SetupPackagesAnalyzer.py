@@ -80,7 +80,7 @@ db.execute("""CREATE TABLE IF NOT EXISTS Updates(Assembly_Id INTEGER, Version ST
 for package in packages:
 	# Analizza ciascun pacchetto una sola volta
 	try:
-		db.execute('INSERT INTO packages VALUES(?);', (os.path.basename(package),))
+		db.execute('INSERT INTO packages VALUES(?);', (os.path.basename(package).lower(),))
 	except sqlite3.IntegrityError:
 		print "Saltato il pacchetto preesistente", package
 		continue
@@ -154,7 +154,7 @@ for package in packages:
 		except sqlite3.IntegrityError:
 			pass
 
-		KbId = db.execute('SELECT ROWID FROM packages WHERE kb=?;', (os.path.basename(package),)).fetchone()[0]
+		KbId = db.execute('SELECT ROWID FROM packages WHERE kb=?;', (os.path.basename(package).lower(),)).fetchone()[0]
 		assId = db.execute('SELECT ROWID FROM assemblies WHERE assembly=?;', (assembly,)).fetchone()[0]
 		
 		db.execute('INSERT INTO updates VALUES(?,?,?,?,?,?);', (assId, version, architecture, KbId, int(os.stat(manifest).st_mtime), 0))
